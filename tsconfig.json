@@ -4,7 +4,6 @@
     "module": "commonjs",
     "sourceMap": true,
     "removeComments": true,
-    "isolatedModules": true,
     "strict": true,
     "noImplicitAny": true,
     "allowSyntheticDefaultImports": true,
