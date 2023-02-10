@@ -15,14 +15,14 @@
         margin-right: 20px;
       }
 
-      #file-recognition-images div {
-        float: left;
+      img {
+        max-width: 90vw;
       }
     </style>
   </head>
   <body>
     <label for="recognition-image-input">Choose image</label>
-    <input type="file" accept="image/jpeg, image/png" id="recognition-image-input" /><br />
+    <input type="file" id="recognition-image-input" /><br />
     <label for="recognition-confidence-input">Confidence</label>
     <input type="number" max="100" min="0" id="recognition-confidence-input" value="70" /><br />
 

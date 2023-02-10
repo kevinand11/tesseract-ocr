@@ -1,38 +1,25 @@
-import tesseract from 'tesseract.js';
-
-(tesseract as any).workerOptions.workerPath = 'http://localhost:8080/worker.min.js';
+import tesseract from 'tesseract.js'
 
 const setImageSrc = (image: HTMLImageElement, imageFile: File) => {
   return new Promise((resolve, reject) => {
     const fr = new FileReader();
 
     fr.onload = function() {
-      if (typeof fr.result !== 'string') {
-        return reject(null);
-      }
-
+      if (typeof fr.result !== 'string') return reject(null);
       image.src = fr.result;
-
-      return resolve();
+      return resolve('');
     };
-
     fr.onerror = reject;
-
     fr.readAsDataURL(imageFile);
   });
 };
 
-const recognitionImageInputElement = document.querySelector(
-  '#recognition-image-input',
-) as HTMLInputElement;
-const recognitionConfidenceInputElement = document.querySelector(
-  '#recognition-confidence-input',
-) as HTMLInputElement;
-const recognitionProgressElement = document.querySelector('#recognition-progress');
-const recognitionTextElement = document.querySelector('#recognition-text');
-
-const originalImageElement = document.querySelector('#original-image');
-const labeledImageElement = document.querySelector('#labeled-image');
+const recognitionImageInputElement = document.querySelector('#recognition-image-input') as HTMLInputElement;
+const recognitionConfidenceInputElement = document.querySelector('#recognition-confidence-input') as HTMLInputElement;
+const recognitionProgressElement = document.querySelector('#recognition-progress') as HTMLProgressElement;
+const recognitionTextElement = document.querySelector('#recognition-text') as HTMLDivElement;
+const originalImageElement = document.querySelector('#original-image') as HTMLDivElement;
+const labeledImageElement = document.querySelector('#labeled-image') as HTMLDivElement;
 
 if (
   !recognitionImageInputElement ||
@@ -53,29 +40,22 @@ recognitionImageInputElement.addEventListener('change', () => {
   const file = recognitionImageInputElement.files[0];
 
   return tesseract
-    .recognize(file, {
-      lang: 'eng',
+    .recognize(file, 'eng', {
+      logger: ({ progress, status }) => {
+        if (!progress || !status || status !== 'recognizing text') return null;
+        const p =  progress * 100;
+        recognitionProgressElement.textContent = `${status}: ${p.toFixed(2)}%`;
+        recognitionProgressElement.value = p;
+      },
     })
-    .progress(({ progress, status }) => {
-      if (!progress || !status || status !== 'recognizing text') {
-        return null;
-      }
-
-      const p = (progress * 100).toFixed(2);
-
-      recognitionProgressElement.textContent = `${status}: ${p}%`;
-      (recognitionProgressElement as any).value = p;
-    })
-    .then(async (res) => {
+    .then(async ({ data: res }) => {
       originalImageElement.innerHTML = '';
       labeledImageElement.innerHTML = '';
       recognitionTextElement.innerHTML = '';
 
       const paragraphsElements = res.paragraphs.map(({ text }) => {
         const p = document.createElement('p');
-
         p.textContent = text;
-
         return p;
       });
 
