@@ -34,7 +34,7 @@
   "scripts": {
     "serve": "webpack-dev-server --color",
     "build": "npx webpack",
-    "deploy": "node scripts/deploy.js"
+    "deploy": "node bin/deploy.js"
   },
   "keywords": [],
   "author": "maciejcieslar",
