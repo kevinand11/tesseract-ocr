@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "description": "",
   "private": true,
+  "type": "module",
   "main": "public/bundle.js",
   "dependencies": {
     "JSONStream": "^1.3.5",
